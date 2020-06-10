@@ -3,7 +3,9 @@
 from flask import Flask, request
 from flask_restful import Resource, Api
 
+
 app = Flask(__name__)
+app.secret_key = 'conan'  # this key has to be secure and secret, only you should know
 api = Api(app)   # create an Api object so that we can add resources to it
 
 items = [
