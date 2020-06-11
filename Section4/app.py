@@ -2,11 +2,16 @@
 
 from flask import Flask, request
 from flask_restful import Resource, Api
+from flask_jwt import JWT, jwt_required
 
 
 app = Flask(__name__)
-app.secret_key = 'conan'  # this key has to be secure and secret, only you should know
+app.secret_key = 'conan'  # this key has to be secure and secret, only you should know, make this long, random, and secret in a real app
 api = Api(app)   # create an Api object so that we can add resources to it
+
+jwt = JWT(app, authenticate, identity)  # when we initialize a jwt object, this is gonna utilize the app object, authenticate & identity methods
+                                        # to allow for authentication of users
+                                        # As soon as we initialize a jwt object, Flask-JWT registers an endpoint with our application, /auth
 
 items = [
     {
@@ -16,6 +21,7 @@ items = [
 ]
 
 class Item(Resource):
+    @jwt_required()   # @jwt_required() ensures that a user needs to get authenticated before accessing the get() method
     def get(self, name):
         item = next(filter(lambda x: x['name'] == name, items), None) # filter() returns a filter object, next() gives us the first item found in the filter iterator
         return {'item': item}, 200 if item else 404

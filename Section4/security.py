@@ -1,38 +1,26 @@
 # June 9th
+from werkzeug.security import safe_str_cmp  # safe_str_cmp method is used to compare strings
+from user import User
 
 # This security file contains a few important functions
 
 # The 1st thing is an in-memory table of all registered users
 
 users = [
-    {
-        'id': 1,
-        'username': 'bob',
-        'password': 'asdf'
-    }
+    User(1, 'bob', 'asdf')
 ]
 
 # the 2nd thing are 2 mappings
 
-username_mapping = {'bob': {
-        'id': 1,
-        'username': 'bob',
-        'password': 'asdf'
-    }
-}
+username_mapping = {u.username: u for u in users}
 
-userid_mapping = {1: {
-        'id': 1,
-        'username': 'bob',
-        'password': 'asdf'
-    }
-}
+userid_mapping = {u.id: u for u in users}
 
-# Here is the 1st function to authenticate a user
+# Here is the 1st function to authenticate a user when a user gives us their username and password
 
 def authenticate(username, password):
     user = username_mapping.get(username, None)  # we can directly retrieve user by username without iterating over a list
-    if user and user.password == password:
+    if user and safe_str_cmp(user.password, password):
         return user
 
 
