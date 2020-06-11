@@ -1,8 +1,9 @@
 # May 29th 2020
 
 from flask import Flask, request
-from flask_restful import Resource, Api
+from flask_restful import Resource, Api, reqparse
 from flask_jwt import JWT, jwt_required
+from security import authenticate, identity
 
 
 app = Flask(__name__)
@@ -40,12 +41,18 @@ class Item(Resource):
 
     def put(self, name):   # put is idempotent, which means no matter how many times you call it, the output never changes
                            # so if you call put 10 times, you won't create 10 new items, you only create 1 item
-        request_data = request.get_json()
+        parser = reqparse.RequestParser() # initialize a new object that we can use to parse the JSON payload (not to be confused with JWT payload)
+        parser.add_argument('price',
+                            type=float,
+                            required=True,
+                            help="This field cannot be left blank!")
+        data = parser.parse_args()
+
         item = next(filter(lambda x: x['name'] == name, items), None)
         if item:
-            item.update(request_data)
+            item.update(data)
         else:
-            item = {"name": name, "price": request_data['price']}
+            item = {"name": name, "price": data['price']}
             items.append(item)
         return item, 200
 

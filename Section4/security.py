@@ -1,4 +1,5 @@
 # June 9th
+
 from werkzeug.security import safe_str_cmp  # safe_str_cmp method is used to compare strings
 from user import User
 
