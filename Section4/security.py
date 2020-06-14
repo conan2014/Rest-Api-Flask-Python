@@ -24,12 +24,11 @@ def authenticate(username, password):
     if user and safe_str_cmp(user.password, password):
         return user
 
-
 # Here is the identity function that is unique to Flask_JWT, it takes in payload parameter, which is the content of the JWT token
 
 def identity(payload):
     user_id = payload['identity']
-    return userid_mapping.get(user_id, None)   # we can directly retrieve user by userid without iterating over a list
+    return userid_mapping.get(user_id, None)   # we can directly retrieve user by user_id without iterating over a list
 
 
 
